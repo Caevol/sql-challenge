@@ -1,0 +1,16 @@
+
+
+<!DOCTYPE html>
+<html lang = 'eng'>
+<head>
+  <% include ../partials/head %>
+</head>
+<body class = "container">
+    <section id = "mainSection">
+      <ul>
+        <% db.forEach(function(post) { %>
+          <li> <% post.getSinglePost %> </li>
+          <%        }); %>
+      <ul>
+</body>
+</html>
