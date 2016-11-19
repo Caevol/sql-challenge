@@ -48,7 +48,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', function(req, res, next){
   db.any('SELECT * FROM postings')
     .then(function(db){
-      return res.render('index', {db: db})
+
+      return res.render('index', {db:db});
     })
     .catch(function(err){
       return next(err);
