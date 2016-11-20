@@ -1,17 +1,5 @@
 
 var express = require('express');
-var router = express.Router();
-
-var db = require('./queries');
-
-router.get('/api/posts', db.getAllPosts);
-router.get('/api/posts/:id', db.getSinglePost);
-router.post('/api/posts', db.createPost);
-router.put('/api/posts/:id', db.updatePost);
-router.delete('/api/posts/:id', db.removePost);
-
-module.exports = router;
-
 var promise = require('bluebird');
 
 var options = {
@@ -29,7 +17,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
+var users = require('./queries');
 
 var app = express();
 
@@ -44,6 +32,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(function(req,res,next){
+  if(req.query._method == 'DELETE') {
+    req.method = 'DELETE';
+    req.url = req.path;
+  }
+  next();
+
+});
+
 
 app.get('/', function(req, res, next){
   db.any('SELECT * FROM postings')
@@ -55,6 +52,49 @@ app.get('/', function(req, res, next){
       return next(err);
     });
 });
+
+
+app.get('/posts/:id/edit', function(req,res,next){
+
+  var id = parseInt(req.params.id);
+  db.one('select * from postings where id = $1', id)
+    .then(function (post) {
+      res.render('edit', {post : post})
+    });
+
+});
+
+app.get('/posts/:id', function(req, res, next){
+  var id = parseInt(req.params.id);
+  db.one('select * from postings where id = $1', id)
+    .then(function (post) {
+      res.render('view', {post:post})
+    });
+});
+
+
+app.get('/newpost', function(req,res,next){
+  res.render('newPost');
+});
+
+
+app.post('/newpost', function(req,res,next){
+  users.createPost(req,res,next);
+  res.redirect('/');
+});
+
+
+app.post('/posts/:id/edit', function(req,res,next){
+
+  users.updatePost(req, res, next);
+  res.redirect('/');
+});
+
+app.post('/posts/:id', function(req, res, next){
+  users.removePost(req, res, next);
+  res.redirect('/');
+});
+
 
 
 module.exports = app;

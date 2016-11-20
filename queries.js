@@ -63,6 +63,7 @@ function createPost(req, res, next){
     .catch(function(err) {
       return next(err);
     });
+    res.redirect('/');
 }
 
 function updatePost(req, res, next) {
@@ -84,14 +85,10 @@ function removePost(req, res, next) {
   var postID = parseInt(req.params.id);
   db.result('delete from postings where id = $1', postID)
     .then(function (results) {
-        res.status(200)
-          .json({
-            status: 'success',
-            message: 'Removed ${result.rowCount} post'
-          });
+        res.redirect('/');
     })
     .catch(function (err) {
       return next(err);
     })
-
+    res.redirect('/');
 }

@@ -3,14 +3,23 @@
 <!DOCTYPE html>
 <html lang = 'eng'>
 <head>
-  <% include ../partials/head %>
+
 </head>
 <body class = "container">
     <section id = "mainSection">
+
+      <a href = "/newpost">Add new Post</a>
+
+
       <ul>
+
+
+
         <% db.forEach(function(post) { %>
-          <li> <% post.getSinglePost %> </li>
-          <%        }); %>
-      <ul>
+
+          <li> <%= post.postname %>:  <%= post.postcontents %>.
+              <p><a href="/posts/<%=post.id%>/edit"><input type = "Button" value = "Edit"></a> <a href="/posts/<%=post.id%>"><input type = "Button" value = "View"></a>  </li>
+          <%       });  %>
+      </ul>
 </body>
 </html>
